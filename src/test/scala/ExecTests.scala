@@ -25,6 +25,7 @@ import org.scalatest.junit.JUnitRunner
 class ExecTests extends SemanticTests {
 
   import SECDTree._
+  import Macros._
 
   // Simple constants
 
@@ -500,110 +501,110 @@ class ExecTests extends SemanticTests {
 
   // AND operation result
 
-  test("[&& test1] print true") {
+  test(s"[&&] line $LINE") {
     execTestInline("""
                      |print(true && true)""".stripMargin, "true\n")
   }
 
-  test("[&& test2] print false") {
+  test(s"[&&] line $LINE") {
     execTestInline("""
                      |print(true && false)""".stripMargin, "false\n")
   }
 
-  test("[&& test3] print false") {
+  test(s"[&&] line $LINE") {
     execTestInline("""
                      |print(false && true)""".stripMargin, "false\n")
   }
 
-  test("[&& test4] print false") {
+  test(s"[&&] line $LINE") {
     execTestInline("""
                      |print(false && false)""".stripMargin, "false\n")
   }
 
-  test("[&& test5] print false") {
+  test(s"[&&] line $LINE") {
     execTestInline("""
                      |print(false && false && false && true)""".stripMargin, "false\n")
   }
 
-  test("[&& test6] print true") {
+  test(s"[&&] line $LINE") {
     execTestInline("""
                      |print(true && true && true && true)""".stripMargin, "true\n")
   }
 
-  test("[&& test7] print false") {
+  test(s"[&&] line $LINE") {
     execTestInline("""
                      |print(true && true && true && false)""".stripMargin, "false\n")
   }
 
   // OR operation result
 
-  test("[|| test1] print true") {
+  test(s"[||] line $LINE") {
     execTestInline("""
                      |print(true || true)""".stripMargin, "true\n")
   }
 
-  test("[|| test2] print true") {
+  test(s"[||] line $LINE") {
     execTestInline("""
                      |print(true || false)""".stripMargin, "true\n")
   }
 
-  test("[|| test3] print true") {
+  test(s"[||] line $LINE") {
     execTestInline("""
                      |print(false || true)""".stripMargin, "true\n")
   }
 
-  test("[|| test4] print false") {
+  test(s"[||] line $LINE") {
     execTestInline("""
                      |print(false || false)""".stripMargin, "false\n")
   }
 
-  test("[|| test5] print true") {
+  test(s"[||] line $LINE") {
     execTestInline("""
                      |print(false || false || true)""".stripMargin, "true\n")
   }
 
-  test("[|| test6] print true") {
+  test(s"[||] line $LINE") {
     execTestInline("""
                      |print(true || false || false || true)""".stripMargin, "true\n")
   }
 
   // NOT operation result
 
-  test("[~ test1] print false") {
+  test(s"[~] line $LINE") {
     execTestInline("""
                      |print(~true)""".stripMargin, "false\n")
   }
 
-  test("[~ test2] print true") {
+  test(s"[~] line $LINE") {
     execTestInline("""
                      |print(~false)""".stripMargin, "true\n")
   }
 
-  test("[~ test3] print true") {
+  test(s"[~] line $LINE") {
     execTestInline("""
                      |print(~~true)""".stripMargin, "true\n")
   }
 
-  test("[~ test4] print false") {
+  test(s"[~] line $LINE") {
     execTestInline("""
                      |print(~~~true)""".stripMargin, "false\n")
   }
 
   // AND, OR, NOT combined operation result
 
-  test("[&&, ||, ~ test1] print true") {
+  test(s"[&&, ||, ~] line $LINE") {
     execTestInline("""
                      |print((~~true || false) && true)""".stripMargin, "true\n")
   }
 
-  test("[&&, ||, ~ test2] print false") {
+  test(s"[&&, ||, ~] line $LINE") {
     execTestInline("""
                      |print((false || (~true || false)) && true)""".stripMargin, "false\n")
   }
 
   // AND operation translation
 
-  test("[&& test1] return tree") {
+  test(s"[&&] line $LINE") {
     targetTestInline("""
                        |print(true && false)""".stripMargin,
       List(
@@ -616,7 +617,7 @@ class ExecTests extends SemanticTests {
     )
   }
 
-  test("[&& test2] return tree") {
+  test(s"[&&] line $LINE") {
     targetTestInline("""
                        |print(true && false && true)""".stripMargin,
       List(
@@ -633,7 +634,7 @@ class ExecTests extends SemanticTests {
     )
   }
 
-  test("[&& test3] return tree") {
+  test(s"[&&] line $LINE") {
     targetTestInline("""
                        |print((true && false) && true)""".stripMargin,
       List(
@@ -658,6 +659,48 @@ class ExecTests extends SemanticTests {
     execTestInline("""
                      |let a = array int;
                      |print(a)""".stripMargin, "empty array\n")
+  }
+
+  // Append array
+
+  /*test(s"[&&] line $LINE") {
+    targetTestInline("""
+                       |let a = array int;
+                       |a += 1;
+                       |a += 2;
+                       |print(a!0);
+                       |print(a!1)
+                       |""".stripMargin,
+      List(
+        IBool(true),
+        IBranch(
+          List(IBool(false)),
+          List(IBool(false))
+        ),
+        IBranch(
+          List(IBool(true)),
+          List(IBool(false))
+        ),
+        IPrint())
+    )
+  }*/
+
+  test(s"[&&] line $LINE") {
+    targetTestInline("""
+                       |
+                       |""".stripMargin,
+      List(
+        IBool(true),
+        IBranch(
+          List(IBool(false)),
+          List(IBool(false))
+        ),
+        IBranch(
+          List(IBool(true)),
+          List(IBool(false))
+        ),
+        IPrint())
+    )
   }
 
   // FIXME: Tests of execution of 'for' loops, 'break' and 'loop' constructs.
