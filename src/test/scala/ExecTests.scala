@@ -495,116 +495,138 @@ class ExecTests extends SemanticTests {
     )
   }
 
-  // FIXME: add your execution tests of logical operators, arrays and for loops here.
-
-  // FIXME: Tests of short-circuited evaluation of '&&', '||' and '~'.
-
   // AND operation result
 
-  test(s"[&&] line $LINE") {
+  test(s"[&& line $LINE] both true")
+  {
     execTestInline("""
                      |print(true && true)""".stripMargin, "true\n")
   }
 
-  test(s"[&&] line $LINE") {
+  test(s"[&& line $LINE] left is true, right is false")
+  {
     execTestInline("""
                      |print(true && false)""".stripMargin, "false\n")
   }
 
-  test(s"[&&] line $LINE") {
+  test(s"[&& line $LINE] left is false, right is true")
+  {
     execTestInline("""
                      |print(false && true)""".stripMargin, "false\n")
   }
 
-  test(s"[&&] line $LINE") {
+  test(s"[&& line $LINE] both false")
+  {
     execTestInline("""
                      |print(false && false)""".stripMargin, "false\n")
   }
 
-  test(s"[&&] line $LINE") {
+  test(s"[&& line $LINE] two operations in line")
+  {
     execTestInline("""
-                     |print(false && false && false && true)""".stripMargin, "false\n")
+                     |print(false && true && false)""".stripMargin, "false\n")
   }
 
-  test(s"[&&] line $LINE") {
+  test(s"[&& line $LINE] three operations in line")
+  {
     execTestInline("""
-                     |print(true && true && true && true)""".stripMargin, "true\n")
-  }
-
-  test(s"[&&] line $LINE") {
-    execTestInline("""
-                     |print(true && true && true && false)""".stripMargin, "false\n")
+                     |print(true && true && false && true)""".stripMargin, "false\n")
   }
 
   // OR operation result
 
-  test(s"[||] line $LINE") {
+  test(s"[|| line $LINE] both true")
+  {
     execTestInline("""
                      |print(true || true)""".stripMargin, "true\n")
   }
 
-  test(s"[||] line $LINE") {
+  test(s"[|| line $LINE] left is true, right is false")
+  {
     execTestInline("""
                      |print(true || false)""".stripMargin, "true\n")
   }
 
-  test(s"[||] line $LINE") {
+  test(s"[|| line $LINE] left is false, right is true")
+  {
     execTestInline("""
                      |print(false || true)""".stripMargin, "true\n")
   }
 
-  test(s"[||] line $LINE") {
+  test(s"[|| line $LINE] both false")
+  {
     execTestInline("""
                      |print(false || false)""".stripMargin, "false\n")
   }
 
-  test(s"[||] line $LINE") {
+  test(s"[|| line $LINE] two operations in line")
+  {
     execTestInline("""
                      |print(false || false || true)""".stripMargin, "true\n")
   }
 
-  test(s"[||] line $LINE") {
+  test(s"[|| line $LINE] three operations in line")
+  {
     execTestInline("""
-                     |print(true || false || false || true)""".stripMargin, "true\n")
+                     |print(true || false || false || false)""".stripMargin, "true\n")
   }
 
   // NOT operation result
 
-  test(s"[~] line $LINE") {
+  test(s"[~ line $LINE] not true")
+  {
     execTestInline("""
                      |print(~true)""".stripMargin, "false\n")
   }
 
-  test(s"[~] line $LINE") {
+  test(s"[~ line $LINE] not false")
+  {
     execTestInline("""
                      |print(~false)""".stripMargin, "true\n")
   }
 
-  test(s"[~] line $LINE") {
+  test(s"[~ line $LINE] double-not true")
+  {
     execTestInline("""
                      |print(~~true)""".stripMargin, "true\n")
   }
 
-  test(s"[~] line $LINE") {
+  test(s"[~ line $LINE] triple-not false")
+  {
     execTestInline("""
-                     |print(~~~true)""".stripMargin, "false\n")
+                     |print(~~~false)""".stripMargin, "true\n")
   }
 
   // AND, OR, NOT combined operation result
 
-  test(s"[&&, ||, ~] line $LINE") {
+  test(s"[&&, ||, ~ line $LINE] double-not inside brackets")
+  {
     execTestInline("""
                      |print((~~true || false) && true)""".stripMargin, "true\n")
   }
 
-  test(s"[&&, ||, ~] line $LINE") {
+  test(s"[&&, ||, ~ line $LINE] combination of brackets")
+  {
     execTestInline("""
-                     |print((false || (~true || false)) && true)""".stripMargin, "false\n")
+                     |print(true || ((~true || false) && true))""".stripMargin, "true\n")
+  }
+
+  test(s"[&&, ||, ~ line $LINE] bool expresion")
+  {
+    execTestInline("""
+                     |print(3 = 3 && (0 < -1 || 0 < 1))""".stripMargin, "true\n")
+  }
+
+  test(s"[&&, ||, ~ line $LINE] bool expresion")
+  {
+    execTestInline("""
+                     |print(~(3 = 5 || 6 < 10) && true)""".stripMargin, "false\n")
   }
 
   // AND operation translation
 
-  test(s"[&&] line $LINE") {
+  test(s"[&& line $LINE] simple bool translation")
+  {
     targetTestInline("""
                        |print(true && false)""".stripMargin,
       List(
@@ -617,7 +639,8 @@ class ExecTests extends SemanticTests {
     )
   }
 
-  test(s"[&&] line $LINE") {
+  test(s"[&& line $LINE] two operations in line translation")
+  {
     targetTestInline("""
                        |print(true && false && true)""".stripMargin,
       List(
@@ -634,15 +657,14 @@ class ExecTests extends SemanticTests {
     )
   }
 
-  test(s"[&&] line $LINE") {
+  // OR operation translation
+
+  test(s"[|| line $LINE] simple bool translation")
+  {
     targetTestInline("""
-                       |print((true && false) && true)""".stripMargin,
+                       |print(true || false)""".stripMargin,
       List(
         IBool(true),
-        IBranch(
-          List(IBool(false)),
-          List(IBool(false))
-        ),
         IBranch(
           List(IBool(true)),
           List(IBool(false))
@@ -651,59 +673,370 @@ class ExecTests extends SemanticTests {
     )
   }
 
-  // FIXME: Tests of execution of array operations
-
-  // Create array
-
-  test("[array test1] create array") {
-    execTestInline("""
-                     |let a = array int;
-                     |print(a)""".stripMargin, "empty array\n")
+  test(s"[|| line $LINE] two operations in line translation")
+  {
+    targetTestInline("""
+                       |print(true || false || true)""".stripMargin,
+      List(
+        IBool(true),
+        IBranch(
+          List(IBool(true)),
+          List(IBool(false))
+        ),
+        IBranch(
+          List(IBool(true)),
+          List(IBool(true))
+        ),
+        IPrint())
+    )
   }
 
-  // Append array
+  // NOT operation trnslation
 
-  /*test(s"[&&] line $LINE") {
+  test(s"[|| line $LINE] simple operation translation")
+  {
+    targetTestInline("""
+                       |print(~true)""".stripMargin,
+      List(
+        IBool(true),
+        IBranch(
+          List(IBool(false)),
+          List(IBool(true))
+        ),
+        IPrint())
+    )
+  }
+
+  // Create array, append, deref, update, length (result, translation)
+
+  //Create
+
+  test(s"[array line $LINE] print empty array") {
+    execTestInline("""
+                     |let a = array int;
+                     |print(a)
+                     |""".stripMargin, "empty array\n")
+  }
+
+  test(s"[array line $LINE] length of new array is 0") {
+    execTestInline("""
+                     |let a = array int;
+                     |print(length(a))
+                     |""".stripMargin, "0\n")
+  }
+
+  test(s"[array line $LINE] print new array translation")
+  {
+    targetTestInline("""
+                     |let a = array int;
+                     |print(a)
+                     |""".stripMargin,
+      List(
+        IArray(),
+        IClosure(
+          None,
+          List("a"),
+          List(
+            IVar("a"),
+            IPrint()
+          )
+
+        ),
+        ICall())
+    )
+  }
+
+  //Length, Append
+
+  test(s"[array line $LINE] print length every append")
+  {
+    execTestInline("""
+                     |let a = array int;
+                     |print(length(a));
+                     |a += 100;
+                     |print(length(a));
+                     |a += 200;
+                     |print(length(a));
+                     |a += 300;
+                     |print(length(a))
+                     |""".stripMargin, "0\n1\n2\n3\n")
+  }
+
+  test(s"[array line $LINE] print every new append length translation")
+  {
+    targetTestInline("""
+                       |let a = array int;
+                       |print(length(a));
+                       |a += 100;
+                       |print(length(a));
+                       |a += 200;
+                       |print(length(a));
+                       |a += 300;
+                       |print(length(a))
+                       |""".stripMargin,
+      List(
+        IArray(),
+        IClosure(
+          None,
+          List("a"),
+          List(
+            IVar("a"),
+            ILength(),
+            IPrint(),
+            IVar("a"),
+            IInt(100),
+            IAppend(),
+            IVar("a"),
+            ILength(),
+            IPrint(),
+            IVar("a"),
+            IInt(200),
+            IAppend(),
+            IVar("a"),
+            ILength(),
+            IPrint(),
+            IVar("a"),
+            IInt(300),
+            IAppend(),
+            IVar("a"),
+            ILength(),
+            IPrint()
+          )
+        ),
+        ICall()
+      )
+    )
+  }
+
+  //Deref, Append
+
+  test(s"[&& line $LINE] print deref")
+  {
+    execTestInline("""
+                       |let a = array int;
+                       |a += 1;
+                       |print(a!0);
+                       |a += 2;
+                       |print(a!1);
+                       |a += 3;
+                       |print(a!0);
+                       |print(a!2)
+                       |""".stripMargin, "1\n2\n1\n3\n")
+  }
+
+  test(s"[array line $LINE] print deref translation")
+  {
     targetTestInline("""
                        |let a = array int;
                        |a += 1;
+                       |print(a!0);
                        |a += 2;
                        |print(a!0);
                        |print(a!1)
                        |""".stripMargin,
       List(
-        IBool(true),
-        IBranch(
-          List(IBool(false)),
-          List(IBool(false))
+        IArray(),
+        IClosure(
+          None,
+          List("a"),
+          List(
+            IVar("a"),
+            IInt(1),
+            IAppend(),
+            IVar("a"),
+            IInt(0),
+            IDeref(),
+            IPrint(),
+            IVar("a"),
+            IInt(2),
+            IAppend(),
+            IVar("a"),
+            IInt(0),
+            IDeref(),
+            IPrint(),
+            IVar("a"),
+            IInt(1),
+            IDeref(),
+            IPrint()
+          )
         ),
-        IBranch(
-          List(IBool(true)),
-          List(IBool(false))
-        ),
-        IPrint())
-    )
-  }*/
-
-  test(s"[&&] line $LINE") {
-    targetTestInline("""
-                       |
-                       |""".stripMargin,
-      List(
-        IBool(true),
-        IBranch(
-          List(IBool(false)),
-          List(IBool(false))
-        ),
-        IBranch(
-          List(IBool(true)),
-          List(IBool(false))
-        ),
-        IPrint())
+        ICall()
+      )
     )
   }
 
-  // FIXME: Tests of execution of 'for' loops, 'break' and 'loop' constructs.
+  // Update
+
+  test(s"[array line $LINE] append array with elements and update each element with value increased by 1") {
+    execTestInline("""
+                     |let a = array int;
+                     |a += 1;
+                     |a += 2;
+                     |a += 3;
+                     |a!0 := a!0 + 1;
+                     |a!1 := a!1 + 1;
+                     |a!2 := a!2 + 1;
+                     |print(a!2);
+                     |print(a!1);
+                     |print(a!0)
+                     |""".stripMargin, "4\n3\n2\n")
+  }
+
+  test(s"[array line $LINE] update value and print translation")
+  {
+    targetTestInline("""
+                       |let a = array int;
+                       |a += 1;
+                       |a!0 := a!0 + 1;
+                       |print(a!0)
+                       |""".stripMargin,
+      List(
+        IArray(),
+        IClosure(
+          None,
+          List("a"),
+          List(
+            IVar("a"),
+            IInt(1),
+            IAppend(),
+            IVar("a"),
+            IInt(0),
+            IVar("a"),
+            IInt(0),
+            IDeref(),
+            IInt(1),
+            IAdd(),
+            IUpdate(),
+            IVar("a"),
+            IInt(0),
+            IDeref(),
+            IPrint()
+          )
+
+        ),
+        ICall())
+    )
+  }
+
+  // FOR loop, BREAK, LOOP
+
+  test(s"[FOR line $LINE] increasing, step 1")
+  {
+    execTestInline("""
+                     |for i = 1 to 5 step 1 do {
+                     |  print(i)
+                     |}
+                     |""".stripMargin, "1\n2\n3\n4\n5\n")
+  }
+
+  test(s"[FOR line $LINE] decreasing, step -1")
+  {
+    execTestInline("""
+                     |for i = 5 to 1 step -1 do {
+                     |  print(i)
+                     |}
+                     |""".stripMargin, "5\n4\n3\n2\n1\n")
+  }
+
+  test(s"[FOR line $LINE] increasing, no step")
+  {
+    execTestInline("""
+                     |for i = 1 to 5 do {
+                     |  print(i)
+                     |}
+                     |""".stripMargin, "1\n2\n3\n4\n5\n")
+  }
+
+  test(s"[FOR line $LINE] decreasing, no step -> immediate break")
+  {
+    execTestInline("""
+                     |for i = 5 to 1 do {
+                     |  print(i)
+                     |}
+                     |""".stripMargin, "")
+  }
+
+  test(s"[FOR line $LINE] increasing, step -1 -> immediate break")
+  {
+    execTestInline("""
+                     |for i = 1 to 5 step -1 do {
+                     |  print(i)
+                     |}
+                     |""".stripMargin, "")
+  }
+
+  test(s"[FOR line $LINE] decreasing, step 1 -> immediate break")
+  {
+    execTestInline("""
+                     |for i = 5 to 1 step 1 do {
+                     |  print(i)
+                     |}
+                     |""".stripMargin, "")
+  }
+
+  test(s"[FOR line $LINE] nested loops")
+  {
+    execTestInline("""
+                     |for i = 1 to 3 step 1 do {
+                     |  for j = 3 to 1 step -1 do {
+                     |    print(j)
+                     |  };
+                     |  print(i)
+                     |}
+                     |""".stripMargin, "3\n2\n1\n1\n3\n2\n1\n2\n3\n2\n1\n3\n")
+  }
+
+  test(s"[BREAK line $LINE] break on halfway")
+  {
+    execTestInline("""
+                     |let v = 3;
+                     |for i = 1 to 10 step 1 do {
+                     |  if (v < i) {
+                     |    break
+                     |  } else { };
+                     |  print(i)
+                     |}
+                     |""".stripMargin, "1\n2\n3\n")
+  }
+
+  test(s"[BREAK line $LINE] break from nested loop")
+  {
+    execTestInline("""
+                     |for i = 1 to 5 step 1 do {
+                     |  for j = 6 to 10 step 1 do {
+                     |    break;
+                     |    print(j)
+                     |  };
+                     |  print(i)
+                     |}
+                     |""".stripMargin, "1\n2\n3\n4\n5\n")
+  }
+
+  test(s"[LOOP line $LINE] loop every even iteration")
+  {
+    execTestInline("""
+                     |let v = 3;
+                     |for i = 5 to 1 step -1 do {
+                     |  if (v = i) {
+                     |    loop
+                     |  } else { };
+                     |  print(i)
+                     |}
+                     |""".stripMargin, "5\n4\n2\n1\n")
+  }
+
+  test(s"[LOOP line $LINE] loop inside nested loop")
+  {
+    execTestInline("""
+                     |for i = 5 to 1 step -1 do {
+                     |    for j = 1 to 5 step 1 do {
+                     |        loop;
+                     |        print(j)
+                     |    };
+                     |    print(i)
+                     |}
+                     |""".stripMargin, "5\n4\n3\n2\n1\n")
+  }
 
   // Bigger examples.
 
